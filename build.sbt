@@ -1,6 +1,6 @@
 import scoverage.ScoverageKeys
 
-name := """capmovie-Backend"""
+name := """capmovie-backend"""
 organization := "uk.gov.hmrc.capmovie-backend"
 
 version := "1.0-SNAPSHOT"
