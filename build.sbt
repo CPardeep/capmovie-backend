@@ -26,7 +26,7 @@ lazy val scoverageSettings = Seq(
 scalaVersion := "2.12.13"
 
 libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
 resolvers += "HMRC-open-artefacts-maven2" at "https://open.artefacts.tax.service.gov.uk/maven2"
 resolvers += Resolver.bintrayRepo("hmrc", "releases")
 libraryDependencies += "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "0.50.0"
