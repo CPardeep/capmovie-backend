@@ -2,10 +2,11 @@ package utils
 
 object MovieFields {
   val id = "id"
-  val name = "name"
-  val year = "year"
+  val plot = "plot"
+  val genres = "genres"
+  val rated = "rated"
   val genre = "genre"
-  val ageRating = "ageRating"
-  val img = "img"
-  val description = "description"
+  val cast = "cast"
+  val poster = "poster"
+  val title = "title"
 }

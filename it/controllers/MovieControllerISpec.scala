@@ -1,5 +1,6 @@
 package controllers
 
+import models.Movie
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -9,20 +10,37 @@ import play.api.libs.ws.WSClient
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repos.MovieRepo
 import utils.MovieFields
-import utils.TestObjects.movie
 
 class MovieControllerISpec extends AnyWordSpec with Matchers with GuiceOneServerPerSuite {
   val ws: WSClient = app.injector.instanceOf[WSClient]
   val controller: MovieController = app.injector.instanceOf[MovieController]
   val db: MovieRepo = app.injector.instanceOf[MovieRepo]
+  val movie: Movie = Movie(
+    id = "TESTMOV",
+    plot = "Test plot",
+    genres = List(
+      "testGenre1",
+      "testGenre2"),
+    rated = "testRating",
+    cast = List(
+      "testPerson",
+      "TestPerson"),
+    poster = "testURL",
+    title = "testTitle")
   val json: JsValue = Json.parse(
     s"""{
-       |    "${MovieFields.name}" : "${movie.name}",
-       |    "${MovieFields.year}" : ${movie.year},
-       |    "${MovieFields.genre}" : "${movie.genre}",
-       |    "${MovieFields.ageRating}" : "${movie.ageRating}",
-       |    "${MovieFields.img}" : "${movie.img}",
-       |    "${MovieFields.description}" : "${movie.description}"
+       |    "${MovieFields.plot}" : "${movie.plot}",
+       |    "${MovieFields.genres}" : [
+       |       "${movie.genres.head}",
+       |       "${movie.genres(1)}"
+       |    ],
+       |    "${MovieFields.rated}" : "${movie.rated}",
+       |    "${MovieFields.cast}" : [
+       |       "${movie.cast.head}",
+       |       "${movie.cast(1)}"
+       |    ],
+       |    "${MovieFields.poster}" : "${movie.poster}",
+       |    "${MovieFields.title}" : "${movie.title}"
        |}
        |""".stripMargin)
 

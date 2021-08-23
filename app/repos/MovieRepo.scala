@@ -15,11 +15,16 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
   domainFormat = Movie.format,
   indexes = Seq(IndexModel(ascending("id"), IndexOptions().unique(true)))
 ) {
+  def readAll(): Future[List[Movie]] ={
+    collection.find().toFuture().map {
+      _.toList
+    }
+  }
+
   def create(movie: Movie): Future[Boolean] = {
     collection.insertOne(movie).toFuture().map { response =>
       response.wasAcknowledged && !response.getInsertedId.isNull
     }.recover { case _ => false }
   }
-
 
 }
