@@ -1,12 +1,13 @@
 package connectors
 
 import models.Movie
+import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repos.MovieRepo
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySupport[Movie] {
-  override val repository = new MovieRepo(mongoComponent)
+  val repository = new MovieRepo(mongoComponent)
   val movie: Movie = Movie(
     id = "TESTMOV",
     plot = "Test plot",
@@ -19,6 +20,8 @@ class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
       "TestPerson"),
     poster = "testURL",
     title = "testTitle")
+
+
   "Create" should {
     "return true when valid details are submitted" in {
       await(repository.create(movie)) shouldBe true
@@ -26,14 +29,15 @@ class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
     "return false when duplicate details are submitted" in {
       await(repository.create(movie))
       await(repository.create(movie)) shouldBe false
+
     }
   }
 
   "readAll" should {
     "return a list of movies successfully" in {
-      val testMovieList = List(movie, movie.copy(id= "TESMOV2"))
-      testMovieList.map(x => await(repository.create(x)))
-      await(repository.readAll()) shouldBe testMovieList
+      await(repository.create(movie))
+      await(repository.create(movie.copy(id = "TESTMOV2")))
+      await(repository.readAll()).size shouldBe 2
     }
     "returns an empty list" in {
       await(repository.readAll()) shouldBe List()
