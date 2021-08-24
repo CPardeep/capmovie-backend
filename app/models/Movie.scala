@@ -4,7 +4,7 @@ import play.api.libs.json.{JsError, JsResult, JsSuccess, JsValue, Json, OFormat,
 
 import java.util.UUID
 
-case class Movie(id: String, name: String, year: Int, genre: String, ageRating: String, img: String, description: String)
+case class Movie(id: String, plot: String, genres: List[String], rated: String, cast: List[String], poster: String, title: String)
 
 object Movie {
 
@@ -19,13 +19,13 @@ object Movie {
     def reads(json: JsValue): JsResult[Movie] = {
       val result = for {
         id <- Some(createMovieID())
-        name <- (json \ "name").asOpt[String]
-        year <- (json \ "year").asOpt[Int]
-        genre <- (json \ "genre").asOpt[String]
-        ageRating <- (json \ "ageRating").asOpt[String]
-        img <- (json \ "img").asOpt[String]
-        description <- (json \ "description").asOpt[String]
-      } yield (Movie(id, name, year, genre, ageRating, img, description))
+        plot <- (json \ "plot").asOpt[String]
+        genres <- (json \ "genres").asOpt[List[String]]
+        rated <- (json \ "rated").asOpt[String]
+        cast <- (json \ "cast").asOpt[List[String]]
+        poster <- (json \ "poster").asOpt[String]
+        title <- (json \ "title").asOpt[String]
+      } yield Movie(id, plot, genres, rated, cast, poster, title)
       result match {
         case Some(x) => JsSuccess(x)
         case _ => JsError("ERROR")

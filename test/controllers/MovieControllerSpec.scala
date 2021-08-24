@@ -1,13 +1,14 @@
 package controllers
 
+import models.Movie
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR}
-import play.api.libs.json.Json
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.{JsValue, Json}
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Helpers}
+import repos.MovieRepo
 import services.MovieService
-import utils.TestObjects.movie
 import utils.MovieFields
 
 import scala.concurrent.Future
@@ -15,22 +16,42 @@ import scala.concurrent.Future
 class MovieControllerSpec extends AbstractControllerTest {
 
   val service: MovieService = mock[MovieService]
-  val controller = new MovieController(Helpers.stubMessagesControllerComponents(), service)
-  val json = Json.parse(
+  val repo = mock[MovieRepo]
+  val controller = new MovieController(Helpers.stubMessagesControllerComponents(), service, repo)
+  val movie: Movie = Movie(
+    id = "TESTMOV",
+    plot = "Test plot",
+    genres = List(
+      "testGenre1",
+      "testGenre2"),
+    rated = "testRating",
+    cast = List(
+      "testPerson",
+      "TestPerson"),
+    poster = "testURL",
+    title = "testTitle")
+  val json: JsValue = Json.parse(
     s"""{
-       |    "${MovieFields.name}" : "${movie.name}",
-       |    "${MovieFields.year}" : ${movie.year},
-       |    "${MovieFields.genre}" : "${movie.genre}",
-       |    "${MovieFields.ageRating}" : "${movie.ageRating}",
-       |    "${MovieFields.img}" : "${movie.img}",
-       |    "${MovieFields.description}" : "${movie.description}"
+       |    "${MovieFields.plot}" : "${movie.plot}",
+       |    "${MovieFields.genres}" : [
+       |       "${movie.genres.head}",
+       |       "${movie.genres(1)}"
+       |    ],
+       |    "${MovieFields.rated}" : "${movie.rated}",
+       |    "${MovieFields.cast}" : [
+       |       "${movie.cast.head}",
+       |       "${movie.cast(1)}"
+       |    ],
+       |    "${MovieFields.poster}" : "${movie.poster}",
+       |    "${MovieFields.title}" : "${movie.title}"
        |}
        |""".stripMargin)
+  val testMovieList = List(movie, movie.copy(id= "TESMOV2"))
 
-  "createMovie" should  {
+  "createMovie" should {
     "succeed" when {
       "a movie is successfully added to the database" in {
-        when(service.create(any())) thenReturn(Future.successful(true))
+        when(service.create(any())) thenReturn (Future.successful(true))
         val result = controller.create().apply(FakeRequest().withBody(json))
         status(result) shouldBe CREATED
       }
@@ -48,6 +69,18 @@ class MovieControllerSpec extends AbstractControllerTest {
     }
   }
 
+  "readAll" should {
+    "return OK with list of movies" in {
+      when(repo.readAll()) thenReturn Future.successful(testMovieList)
+      val result = controller.readAll().apply(FakeRequest())
+      status(result) shouldBe OK
+    }
 
+    "return an badRequest" in {
+      when(repo.readAll()) thenReturn Future.failed(new RuntimeException)
+      val result = controller.readAll().apply(FakeRequest())
+      status(result) shouldBe BAD_REQUEST
+    }
+  }
 
 }
