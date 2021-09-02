@@ -3,7 +3,7 @@ package controllers
 import models.Movie
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Helpers}
@@ -71,14 +71,37 @@ class MovieControllerSpec extends AbstractControllerTest {
 
   "readAll" should {
     "return OK with list of movies" in {
-      when(repo.readAll()) thenReturn Future.successful(testMovieList)
+      when(repo.readAll())
+        .thenReturn(Future.successful(testMovieList))
       val result = controller.readAll().apply(FakeRequest())
       status(result) shouldBe OK
     }
 
-    "return an badRequest" in {
-      when(repo.readAll()) thenReturn Future.failed(new RuntimeException)
+    "return a badRequest" in {
+      when(repo.readAll())
+        .thenReturn(Future.failed(new RuntimeException))
       val result = controller.readAll().apply(FakeRequest())
+      status(result) shouldBe BAD_REQUEST
+    }
+  }
+
+  "read" should {
+    "return OK with a movie" in {
+      when(repo.read(any()))
+        .thenReturn(Future.successful(Some(movie)))
+      val result = controller.read(movie.id).apply(FakeRequest())
+      status(result) shouldBe OK
+    }
+    "return not found" in {
+      when(repo.read(any()))
+        .thenReturn(Future.successful(None))
+      val result = controller.read(movie.id).apply(FakeRequest())
+      status(result) shouldBe NOT_FOUND
+    }
+    "return BadRequest" in {
+      when(repo.read(any()))
+        .thenReturn(Future.failed(new RuntimeException))
+      val result = controller.read(movie.id).apply(FakeRequest())
       status(result) shouldBe BAD_REQUEST
     }
   }

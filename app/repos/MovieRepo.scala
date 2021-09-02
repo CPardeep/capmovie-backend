@@ -1,10 +1,11 @@
 package repos
 
 import models._
-import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions}
 import org.mongodb.scala.model.Indexes.ascending
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -20,6 +21,7 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
       _.toList
     }
   }
+  def read(id: String): Future[Option[Movie]] = collection.find(Filters.eq("id", id)).headOption()
 
   def create(movie: Movie): Future[Boolean] = {
     collection.insertOne(movie).toFuture().map { response =>

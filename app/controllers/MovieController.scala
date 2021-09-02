@@ -18,6 +18,12 @@ class MovieController @Inject()(cc: ControllerComponents, service: MovieService,
       .recover {case _ => BadRequest}
   }
 
+  def read(id: String): Action[AnyContent] = Action.async { implicit request =>
+    movieRepo.read(id).map {
+      case Some(movie) => Ok(Json.toJson(movie))
+      case None => NotFound
+    }.recover{case _ => BadRequest}
+  }
   def create(): Action[JsValue] = Action.async(parse.json) {
     _.body.validate[Movie](newMovieReads) match {
       case JsSuccess(x, _) => service.create(x).map {
