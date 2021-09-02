@@ -32,7 +32,16 @@ class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
 
     }
   }
-
+  "Read" should {
+    "return a movie successfully" in {
+      await(repository.create(movie))
+      val result = await(repository.read(movie.id))
+      result shouldBe Some(movie)
+    }
+    "return nothing" in {
+      await(repository.read(movie.id)) shouldBe None
+    }
+  }
   "readAll" should {
     "return a list of movies successfully" in {
       await(repository.create(movie))
