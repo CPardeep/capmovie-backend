@@ -10,6 +10,6 @@ GET     /assets/*file                    controllers.Assets.versioned(path="/pub
 POST    /movie                           controllers.MovieController.create
 GET     /movie-list                      controllers.MovieController.readAll
 GET     /movie/:id                       controllers.MovieController.read(id: String)
-
+DELETE  /delete/:id                      controllers.MovieController.delete(id: String)
 +nocsrf
 POST    /admin-login                     controllers.AdminController.login

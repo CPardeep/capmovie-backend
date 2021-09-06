@@ -51,6 +51,15 @@ class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
     "returns an empty list" in {
       await(repository.readAll()) shouldBe List()
     }
+    "Delete" should {
+      "return true when deleted successfully" in {
+        await(repository.create(movie))
+        await(repository.delete(movie.id)) shouldBe true
+      }
+      "return false when id doesnt exist" in {
+        await(repository.delete("badID")) shouldBe false
+      }
+    }
   }
 
 }

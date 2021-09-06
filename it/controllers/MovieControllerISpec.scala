@@ -4,7 +4,7 @@ import models.Movie
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.http.Status.{BAD_REQUEST, CREATED, NO_CONTENT}
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -63,6 +63,4 @@ class MovieControllerISpec extends AnyWordSpec with Matchers with GuiceOneServer
       }
     }
   }
-
-
 }
