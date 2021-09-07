@@ -3,7 +3,7 @@ package controllers
 import models.Movie
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, NO_CONTENT, OK}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Helpers}
@@ -11,6 +11,7 @@ import repos.MovieRepo
 import services.MovieService
 import utils.MovieFields
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MovieControllerSpec extends AbstractControllerTest {
@@ -106,4 +107,18 @@ class MovieControllerSpec extends AbstractControllerTest {
     }
   }
 
+  "Delete" should {
+    "return NoContent when repo successfully deletes" in {
+      when(repo.delete(any()))
+        .thenReturn(Future(true))
+      val result = controller.delete("goodID").apply(FakeRequest())
+      status(result) shouldBe NO_CONTENT
+    }
+    "return NotFound if id does not exist in repo" in {
+      when(repo.delete(any()))
+        .thenReturn(Future(false))
+      val result = controller.delete("badID").apply(FakeRequest())
+      status(result) shouldBe NOT_FOUND
+    }
+  }
 }

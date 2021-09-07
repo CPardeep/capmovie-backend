@@ -1,6 +1,7 @@
 package repos
 
 import models._
+import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions}
 import org.mongodb.scala.model.Indexes.ascending
 import uk.gov.hmrc.mongo.MongoComponent
@@ -29,4 +30,9 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
     }.recover { case _ => false }
   }
 
+  def delete(id: String): Future[Boolean] = {
+    collection.deleteOne(equal("id", id)).toFuture().map{ response =>
+      response.wasAcknowledged && response.getDeletedCount == 1
+    }
+  }
 }

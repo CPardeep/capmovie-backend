@@ -33,5 +33,10 @@ class MovieController @Inject()(cc: ControllerComponents, service: MovieService,
       case JsError(_) => Future(BadRequest)
     }
   }
-
+  def delete(id: String): Action[AnyContent] = Action.async { implicit request =>
+    movieRepo.delete(id).map {
+      case true => NoContent
+      case false => NotFound
+    }
+  }
 }
