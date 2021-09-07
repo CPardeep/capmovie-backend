@@ -2,12 +2,12 @@ package models
 
 import play.api.libs.json.{JsSuccess, JsValue, Json}
 
-class AdminSpec extends AbstractModelsTest {
-  val admin: Admin = Admin(
+class UserSpec extends AbstractModelsTest {
+  val user: User = User(
     id = "testID",
     password ="testPass"
   )
-  val adminJson: JsValue = Json.parse(
+  val userJson: JsValue = Json.parse(
     s"""{
        |  "id" : "testID",
        |  "password" : "testPass"
@@ -17,10 +17,10 @@ class AdminSpec extends AbstractModelsTest {
   "Movie" can {
     "OFormat" should {
       "convert object to json" in {
-        Json.toJson(admin) shouldBe adminJson
+        Json.toJson(user) shouldBe userJson
       }
       "convert json to object" in {
-        Json.fromJson[Admin](adminJson) shouldBe JsSuccess(admin)
+        Json.fromJson[User](userJson) shouldBe JsSuccess(user)
       }
     }
   }

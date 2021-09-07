@@ -1,13 +1,13 @@
 package connectors
 
-import models.Admin
+import models.User
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repos.AdminRepo
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-class AdminItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySupport[Admin]{
+class AdminItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySupport[User]{
   val repository = new AdminRepo(mongoComponent)
-  val admin: Admin = Admin(
+  val admin: User = User(
     id = "testId",
     password = "testPass"
   )

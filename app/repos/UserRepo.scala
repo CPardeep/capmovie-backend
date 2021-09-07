@@ -9,16 +9,18 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AdminRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepository[User](
-  collectionName = "AdminRepo",
-  mongoComponent = mongoComponent,
+class UserRepo @Inject()(mc: MongoComponent) extends PlayMongoRepository[User](
+  collectionName = "UserRepo",
+  mongoComponent = mc,
   domainFormat = User.format,
   indexes = Seq(IndexModel(ascending("id"), IndexOptions().unique(true)))
 ) {
-  def create(admin: User): Future[Boolean] = {
-    collection.insertOne(admin).toFuture().map { response =>
+  def create(user: User): Future[Boolean] = {
+    collection.insertOne(user).toFuture().map { response =>
       response.wasAcknowledged() && !response.getInsertedId.isNull
-    }.recover{ case _ => false}
+    }.recover { case _ => false }
   }
+
   def read(id: String): Future[Option[User]] = collection.find(Filters.eq("id", id)).headOption()
+
 }

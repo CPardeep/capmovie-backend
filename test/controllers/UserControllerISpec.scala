@@ -8,20 +8,22 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Helpers}
 import services.LoginService
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AdminControllerSpec extends AbstractControllerTest {
+class UserControllerISpec extends AbstractControllerTest {
   val service: LoginService = mock[LoginService]
-  val controller: AdminController = new AdminController(Helpers.stubControllerComponents(), service)
+  val controller: UserController = new UserController(Helpers.stubControllerComponents(), service)
   val testAdmin: User = User(
     id = "testID",
     password = "testPass"
   )
+
   "login" should {
     "return ok" when {
       "JsSuccess and matches pass" in {
-        when(service.checkMatches(any()))
+        when(service.checkMatchesUser(any()))
           .thenReturn(Future(true))
         val result = controller.login.apply(FakeRequest("POST", "/").withBody(Json.toJson(testAdmin)))
         status(result) shouldBe OK
@@ -29,7 +31,7 @@ class AdminControllerSpec extends AbstractControllerTest {
     }
     "return Unauthorized" when {
       "Js Success but matches fails" in {
-        when(service.checkMatches(any()))
+        when(service.checkMatchesUser(any()))
           .thenReturn(Future(false))
         val result = controller.login.apply(FakeRequest("POST", "/").withBody(Json.toJson(testAdmin)))
         status(result) shouldBe UNAUTHORIZED
@@ -43,12 +45,11 @@ class AdminControllerSpec extends AbstractControllerTest {
     }
     "return an internal server error" when {
       "database fails" in {
-        when(service.checkMatches(any()))
+        when(service.checkMatchesUser(any()))
           .thenReturn(Future.failed(new RuntimeException))
         val result = controller.login.apply(FakeRequest("POST", "/").withBody(Json.toJson(testAdmin)))
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
-
 }

@@ -13,3 +13,6 @@ GET     /movie/:id                       controllers.MovieController.read(id: St
 DELETE  /delete/:id                      controllers.MovieController.delete(id: String)
 +nocsrf
 POST    /admin-login                     controllers.AdminController.login
+
++nocsrf
+POST    /user-login                      controllers.UserController.login
