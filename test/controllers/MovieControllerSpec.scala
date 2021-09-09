@@ -17,7 +17,7 @@ import scala.concurrent.Future
 class MovieControllerSpec extends AbstractControllerTest {
 
   val service: MovieService = mock[MovieService]
-  val repo = mock[MovieRepo]
+  val repo: MovieRepo = mock[MovieRepo]
   val controller = new MovieController(Helpers.stubMessagesControllerComponents(), service, repo)
   val movie: Movie = Movie(
     id = "TESTMOV",
@@ -52,13 +52,13 @@ class MovieControllerSpec extends AbstractControllerTest {
   "createMovie" should {
     "succeed" when {
       "a movie is successfully added to the database" in {
-        when(service.create(any())) thenReturn (Future.successful(true))
+        when(service.create(any())) thenReturn Future.successful(true)
         val result = controller.create().apply(FakeRequest().withBody(json))
         status(result) shouldBe CREATED
       }
       "fail" when {
         "the service does not return a success" in {
-          when(service.create(any())) thenReturn (Future.successful(false))
+          when(service.create(any())) thenReturn Future.successful(false)
           val result = controller.create().apply(FakeRequest().withBody(json))
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }

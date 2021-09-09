@@ -16,3 +16,4 @@ POST    /admin-login                     controllers.AdminController.login
 
 +nocsrf
 POST    /user-login                      controllers.UserController.login
+POST    /review                          controllers.ReviewController.create

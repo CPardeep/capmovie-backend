@@ -1,8 +1,7 @@
-package connectors
+package repos
 
 import models.User
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repos.AdminRepo
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 class AdminItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySupport[User]{

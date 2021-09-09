@@ -1,4 +1,4 @@
-package connectors
+package repos
 
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
