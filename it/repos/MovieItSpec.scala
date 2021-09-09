@@ -1,9 +1,7 @@
-package connectors
+package repos
 
 import models.Movie
-import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repos.MovieRepo
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySupport[Movie] {
