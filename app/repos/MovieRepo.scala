@@ -4,6 +4,7 @@ import models._
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions}
 import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.Updates.{addToSet, pull, set}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -35,4 +36,58 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
       response.wasAcknowledged && response.getDeletedCount == 1
     }
   }
+
+  def updateTitle(id: String, title: String): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", id),
+      set("title", title)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def updateGenre(id: String, genre: String): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", id ),
+      addToSet("genres", genre)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def removeGenre(id: String, genre: String): Future[Boolean] = {
+    collection.updateOne(Filters.equal("id", id), pull("genres", genre))
+      .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def updateAgeRating(id: String, rated: String): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", id ),
+      set("rated", rated)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def updatePlot(id: String, plot: String): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", id ),
+      set("plot", plot)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def updatePoster(id: String, poster: String): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", id ),
+      set("poster", poster)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def updateCast(id: String, cast: String): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", id ),
+      addToSet("cast", cast)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def removeCast(id: String, cast: String): Future[Boolean] = {
+    collection.updateOne(Filters.equal("id", id), pull("cast", cast))
+      .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+
 }
