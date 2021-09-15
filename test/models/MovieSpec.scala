@@ -15,7 +15,8 @@ class MovieSpec extends AbstractModelsTest {
       "testPerson",
       "TestPerson"),
     poster = "testURL",
-    title = "testTitle")
+    title = "testTitle"
+  )
   val movieJson: JsValue = Json.parse(
     s"""{
        |    "${MovieFields.id}" : "${movie.id}",
@@ -30,7 +31,11 @@ class MovieSpec extends AbstractModelsTest {
        |       "${movie.cast(1)}"
        |    ],
        |    "${MovieFields.poster}" : "${movie.poster}",
-       |    "${MovieFields.title}" : "${movie.title}"
+       |    "${MovieFields.title}" : "${movie.title}",
+       |    "${MovieFields.review}" : [],
+       |    "${MovieFields.rating}" : [],
+       |    "${MovieFields.avgRating}" : 0
+       |
        |}
        |""".stripMargin)
 
