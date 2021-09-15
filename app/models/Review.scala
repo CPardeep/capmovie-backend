@@ -1,8 +1,8 @@
 package models
 
-import play.api.libs.json.{JsError, JsResult, JsSuccess, JsValue, Json, OFormat, Reads}
+import play.api.libs.json._
 
-case class Review(userId: String, movieId: String, review: String, rating: Double, isApproved: Boolean)
+case class Review(review: String, rating: Double, isApproved: Boolean)
 
 object Review {
 
@@ -11,16 +11,15 @@ object Review {
   val newReviewReads: Reads[Review] = new Reads[Review] {
     def reads(json: JsValue): JsResult[Review] = {
       val result = for {
-        userId <- (json \ "userId").asOpt[String]
-        movieId <- (json \ "movieId").asOpt[String]
         review <- (json \ "review").asOpt[String]
         rating <- (json \ "rating").asOpt[Double]
         isApproved <- (json \ "isApproved").asOpt[Boolean]
-      } yield Review(userId, movieId, review, rating, isApproved)
+      } yield Review(review, rating, isApproved)
       result match {
         case Some(x) => JsSuccess(x)
         case _ => JsError("ERROR")
       }
     }
   }
+
 }
