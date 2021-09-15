@@ -19,11 +19,12 @@ class ReviewService @Inject()(repo: MovieRepo) {
   }
 
   def calculateAvgRating(movieId: String): Future[Boolean] = {
-    repo.read(movieId)flatMap { movie =>
-      val a = movie.get.rating
-      val b = a.map(_._2).foldLeft(0.0)(_ + _) / a.size
-      repo.updateAvgRating(movieId, BigDecimal(b).setScale(2, RoundingMode.HALF_UP).toDouble)
+    repo.read(movieId) flatMap { movie =>
+      val ratings = movie.get.rating
+      val ave = ratings.map(_._2).foldLeft(0.0)(_ + _) / ratings.size
+      repo.updateAvgRating(movieId, BigDecimal(ave).setScale(1, RoundingMode.HALF_UP).toDouble)
     }
   }
+
 
 }

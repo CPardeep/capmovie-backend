@@ -22,7 +22,10 @@ class ReviewServiceSpec extends AbstractServiceTest {
       "testPerson",
       "TestPerson"),
     poster = "testURL",
-    title = "testTitle")
+    title = "testTitle",
+    review = List(("TESTUSER", "TESTREVIEW", false)),
+    rating = List(("TESTUSER", 0.0)),
+  )
 
   val review: Review = Review(
     review = "TESTREVIEW",
@@ -35,13 +38,28 @@ class ReviewServiceSpec extends AbstractServiceTest {
       when(repo.createReview(any(), any())) thenReturn Future.successful(true)
       when(repo.createRating(any(), any())) thenReturn Future.successful(true)
       when(repo.read(any())) thenReturn Future.successful(Some(movie))
-      await(service.createReviewRating("TESTMOV", "TESTUSER", review)) shouldBe true
+      when(repo.updateAvgRating(any(), any())) thenReturn Future.successful(true)
+      await(service.createReviewRating("TESTMOV", "TESTUSER1", review)) shouldBe(true, true, true)
     }
     "return false if the wrong movie id has been given" in {
-      when(repo.createReview(any(), any())) thenReturn Future.successful(true)
-      when(repo.createRating(any(), any())) thenReturn Future.successful(true)
+      when(repo.createReview(any(), any())) thenReturn Future.successful(false)
+      when(repo.createRating(any(), any())) thenReturn Future.successful(false)
       when(repo.read(any())) thenReturn Future.successful(Some(movie))
-      await(service.createReviewRating("TESTMOV1", "TESTUSER", review)) shouldBe false
+      when(repo.updateAvgRating(any(), any())) thenReturn Future.successful(false)
+      await(service.createReviewRating("TESTMOV1", "TESTUSER1", review)) shouldBe(false, false, false)
+    }
+  }
+
+  "calculateAvgRating" should {
+    "return true when an average is calculated" in {
+      when(repo.read(any())) thenReturn Future.successful(Some(movie))
+      when(repo.updateAvgRating(any(), any())) thenReturn Future.successful(true)
+      await(service.calculateAvgRating("TESTMOV")) shouldBe true
+    }
+    "return false when it fails to calculate" in {
+      when(repo.read(any())) thenReturn Future.successful(Some(movie))
+      when(repo.updateAvgRating(any(), any())) thenReturn Future.successful(false)
+      await(service.calculateAvgRating("TESTMOV1")) shouldBe false
     }
   }
 
