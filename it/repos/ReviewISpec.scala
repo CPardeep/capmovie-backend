@@ -24,4 +24,16 @@ class ReviewISpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
       await(repository.create(review)) shouldBe false
     }
   }
+
+  "Delete" should {
+    "return true when a review is deleted from the database" in {
+      await(repository.create(review))
+      await(repository.deleteReview( review.movieId, review.userId)) shouldBe true
+    }
+    "return false when id does not exist in database" in {
+      await(repository.create(review))
+      await(repository.deleteReview(review.movieId, "fakeUser")) shouldBe false
+    }
+  }
+
 }

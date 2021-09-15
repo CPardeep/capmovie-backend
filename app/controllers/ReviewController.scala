@@ -3,8 +3,9 @@ package controllers
 import models.Review
 import models.Review.newReviewReads
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
-import play.api.mvc.{AbstractController, Action, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import repos.ReviewRepo
+
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -18,6 +19,13 @@ class ReviewController @Inject()(cc: ControllerComponents, repo: ReviewRepo) ext
         case false => InternalServerError
       }
       case JsError(_) => Future(BadRequest)
+    }
+  }
+
+  def delete(movieId: String, userId: String): Action[AnyContent] = Action.async { implicit request =>
+    repo.deleteReview(movieId, userId).map {
+      case true => NoContent
+      case false => NotFound
     }
   }
 }
