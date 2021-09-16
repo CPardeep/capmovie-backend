@@ -7,7 +7,6 @@ import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.Updates.{addToSet, pull, set}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -89,5 +88,26 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
       .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
 
+  def createReview(id: String, review: List[Any]): Future[Boolean] = {
+    collection.updateOne(Filters.equal("id", id), addToSet("review", review))
+      .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
 
+  def createRating(id: String, rating: List[Any]): Future[Boolean] = {
+    collection.updateOne(Filters.equal("id", id), addToSet("rating", rating))
+      .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def updateAvgRating(movieId: String, rating: Double): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", movieId ),
+      set("avgRating", rating)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
+
+  def updateReview() = ???
+  def removeReview() = ???
+
+  def updateRating() = ???
+  def remoteRating() = ???
 }

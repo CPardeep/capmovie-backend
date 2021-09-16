@@ -9,4 +9,7 @@ object MovieFields {
   val cast = "cast"
   val poster = "poster"
   val title = "title"
+  val avgRating = "avgRating"
+  val review = "review"
+  val rating = "rating"
 }
