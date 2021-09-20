@@ -88,19 +88,19 @@ class MovieControllerSpec extends AbstractControllerTest {
 
   "read" should {
     "return OK with a movie" in {
-      when(repo.read(any()))
-        .thenReturn(Future.successful(Some(movie)))
+      when(service.read(any()))
+        .thenReturn(Future.successful(Some(movie, 0.0)))
       val result = controller.read(movie.id).apply(FakeRequest())
       status(result) shouldBe OK
     }
     "return not found" in {
-      when(repo.read(any()))
+      when(service.read(any()))
         .thenReturn(Future.successful(None))
       val result = controller.read(movie.id).apply(FakeRequest())
       status(result) shouldBe NOT_FOUND
     }
     "return BadRequest" in {
-      when(repo.read(any()))
+      when(service.read(any()))
         .thenReturn(Future.failed(new RuntimeException))
       val result = controller.read(movie.id).apply(FakeRequest())
       status(result) shouldBe BAD_REQUEST

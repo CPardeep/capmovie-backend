@@ -19,7 +19,7 @@ POST    /user-login                             controllers.UserController.login
 
 # reviews
 +nocsrf
-PATCH   /movie/:movieId/user/:userId/review    controllers.ReviewController.create(movieId: String, userId: String)
+PATCH   /movie/:movieId/review                  controllers.ReviewController.create(movieId: String)
 
 # update routes
 +nocsrf
