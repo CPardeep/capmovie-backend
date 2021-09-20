@@ -10,6 +10,6 @@ object MovieFields {
   val poster = "poster"
   val title = "title"
   val avgRating = "avgRating"
-  val review = "review"
+  val review = "reviews"
   val rating = "rating"
 }

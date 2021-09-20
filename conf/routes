@@ -17,10 +17,9 @@ POST    /admin-login                            controllers.AdminController.logi
 +nocsrf
 POST    /user-login                             controllers.UserController.login
 
-DELETE  /review/:movieId/delete/:userId  controllers.ReviewController.delete(movieId: String, userId: String)
 # reviews
 +nocsrf
-PATCH   /movie/:movieId/user/:userId/review    controllers.ReviewController.create(movieId: String, userId: String)
+PATCH   /movie/:movieId/review                  controllers.ReviewController.create(movieId: String)
 
 # update routes
 +nocsrf

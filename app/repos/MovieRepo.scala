@@ -2,11 +2,12 @@ package repos
 
 import models._
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions}
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.Updates.{addToSet, pull, set}
+import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -17,11 +18,12 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
   domainFormat = Movie.format,
   indexes = Seq(IndexModel(ascending("id"), IndexOptions().unique(true)))
 ) {
-  def readAll(): Future[List[Movie]] ={
+  def readAll(): Future[List[Movie]] = {
     collection.find().toFuture().map {
       _.toList
     }
   }
+
   def read(id: String): Future[Option[Movie]] = collection.find(Filters.eq("id", id)).headOption()
 
   def create(movie: Movie): Future[Boolean] = {
@@ -31,7 +33,7 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
   }
 
   def delete(id: String): Future[Boolean] = {
-    collection.deleteOne(equal("id", id)).toFuture().map{ response =>
+    collection.deleteOne(equal("id", id)).toFuture().map { response =>
       response.wasAcknowledged && response.getDeletedCount == 1
     }
   }
@@ -45,7 +47,7 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
 
   def updateGenre(id: String, genre: String): Future[Boolean] = {
     collection.updateOne(
-      Filters.equal("id", id ),
+      Filters.equal("id", id),
       addToSet("genres", genre)
     ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
@@ -57,28 +59,28 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
 
   def updateAgeRating(id: String, rated: String): Future[Boolean] = {
     collection.updateOne(
-      Filters.equal("id", id ),
+      Filters.equal("id", id),
       set("rated", rated)
     ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
 
   def updatePlot(id: String, plot: String): Future[Boolean] = {
     collection.updateOne(
-      Filters.equal("id", id ),
+      Filters.equal("id", id),
       set("plot", plot)
     ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
 
   def updatePoster(id: String, poster: String): Future[Boolean] = {
     collection.updateOne(
-      Filters.equal("id", id ),
+      Filters.equal("id", id),
       set("poster", poster)
     ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
 
   def updateCast(id: String, cast: String): Future[Boolean] = {
     collection.updateOne(
-      Filters.equal("id", id ),
+      Filters.equal("id", id),
       addToSet("cast", cast)
     ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
@@ -88,26 +90,17 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
       .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
 
-  def createReview(id: String, review: List[Any]): Future[Boolean] = {
-    collection.updateOne(Filters.equal("id", id), addToSet("review", review))
+  def createReview(id: String, review: Review): Future[Boolean] = {
+    collection.updateOne(Filters.equal("id", id), addToSet("reviews", List(review.userId, review.review, review.rating, review.isApproved)))
       .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
 
-  def createRating(id: String, rating: List[Any]): Future[Boolean] = {
-    collection.updateOne(Filters.equal("id", id), addToSet("rating", rating))
-      .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
-  }
 
-  def updateAvgRating(movieId: String, rating: Double): Future[Boolean] = {
-    collection.updateOne(
-      Filters.equal("id", movieId ),
-      set("avgRating", rating)
-    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
-  }
+  //  def updateReview() = ???
+  //  def removeReview() = ???
+  //
+  //  def updateRating() = ???
+  //  def remoteRating() = ???
 
-  def updateReview() = ???
-  def removeReview() = ???
 
-  def updateRating() = ???
-  def remoteRating() = ???
 }

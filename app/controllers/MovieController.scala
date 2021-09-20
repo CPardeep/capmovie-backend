@@ -20,8 +20,8 @@ class MovieController @Inject()(cc: ControllerComponents, service: MovieService,
   }
 
   def read(id: String): Action[AnyContent] = Action.async { implicit request =>
-    movieRepo.read(id).map {
-      case Some(movie) => Ok(Json.toJson(movie))
+    service.read(id).map {
+      case Some((movie, double)) => Ok(Json.toJson(movie, double))
       case None => NotFound
     }.recover { case _ => BadRequest }
   }

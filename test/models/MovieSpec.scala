@@ -32,9 +32,7 @@ class MovieSpec extends AbstractModelsTest {
        |    ],
        |    "${MovieFields.poster}" : "${movie.poster}",
        |    "${MovieFields.title}" : "${movie.title}",
-       |    "${MovieFields.review}" : [],
-       |    "${MovieFields.rating}" : [],
-       |    "${MovieFields.avgRating}" : 0
+       |    "${MovieFields.review}" : []
        |
        |}
        |""".stripMargin)

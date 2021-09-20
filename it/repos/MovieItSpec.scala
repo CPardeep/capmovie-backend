@@ -1,6 +1,6 @@
 package repos
 
-import models.Movie
+import models.{Movie, Review}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
@@ -17,7 +17,9 @@ class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
       "testPerson",
       "TestPerson"),
     poster = "testURL",
-    title = "testTitle")
+    title = "testTitle",
+    reviews = List()
+  )
 
   val updatedTitle: Movie = movie.copy(
     title = "newTestTitle")
@@ -198,39 +200,16 @@ class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
     }
   }
 
+
   "createReview" should {
     "return true if review has successfully been added" in {
       await(repository.create(movie))
-      await(repository.createReview("TESTMOV", List("USER101", "TESTREVIEW", false))) shouldBe true
-      await(repository.read("TESTMOV")) shouldBe Some(movie.copy(review = List(("USER101", "TESTREVIEW", false))))
+      await(repository.createReview("TESTMOV", Review("USER101", "TESTREVIEW", 2.0, isApproved = false))) shouldBe true
     }
     "return false if wrong movie id is given" in {
       await(repository.create(movie))
-      await(repository.createReview("BADID", List("USER101", "TESTREVIEW", false))) shouldBe false
+      await(repository.createReview("BADID", Review("USER101", "TESTREVIEW", 2.0, isApproved = false))) shouldBe false
     }
   }
 
-  "createRating" should {
-    "return true if rating has successfully been added" in {
-      await(repository.create(movie))
-      await(repository.createRating("TESTMOV", List("USER101", 1.0))) shouldBe true
-      await(repository.read("TESTMOV")) shouldBe Some(movie.copy(rating = List(("USER101", 1.0))))
-    }
-    "return false if wrong movie id is given" in {
-      await(repository.create(movie))
-      await(repository.createRating("BADID", List("USER101", 1.0))) shouldBe false
-    }
-  }
-
-  "updateAvgRating" should {
-    "return true if average rating has successfully been added" in {
-      await(repository.create(movie))
-      await(repository.updateAvgRating("TESTMOV", 1.0)) shouldBe true
-      await(repository.read("TESTMOV")) shouldBe Some(movie.copy(avgRating = 1.0))
-    }
-    "return false if wrong movie id is given" in {
-      await(repository.create(movie))
-      await(repository.updateAvgRating("BADID", 1.0)) shouldBe false
-    }
-  }
 }
