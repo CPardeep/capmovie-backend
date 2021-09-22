@@ -5,7 +5,7 @@ import play.api.libs.json.{JsSuccess, JsValue, Json}
 class UserSpec extends AbstractModelsTest {
   val user: User = User(
     id = "testID",
-    password ="testPass"
+    password = "testPass"
   )
   val userJson: JsValue = Json.parse(
     s"""{

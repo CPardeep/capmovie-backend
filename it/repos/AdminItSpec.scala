@@ -4,7 +4,7 @@ import models.User
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-class AdminItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySupport[User]{
+class AdminItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySupport[User] {
   val repository = new AdminRepo(mongoComponent)
   val admin: User = User(
     id = "testId",

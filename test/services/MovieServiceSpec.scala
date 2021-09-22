@@ -16,6 +16,7 @@ class MovieServiceSpec extends AbstractServiceTest {
   val movie: Movie = Movie(
     id = "TESTMOV",
     plot = "Test plot",
+    reviews = Nil,
     genres = List(
       "testGenre1",
       "testGenre2"),
@@ -26,10 +27,11 @@ class MovieServiceSpec extends AbstractServiceTest {
     poster = "testURL",
     title = "testTitle")
 
-  val review: Review = Review("testUser", "testReview", 1.0, isApproved = false)
+  val review: Review = Review(None, "testUser", "testReview", 1.0, isApproved = false)
 
   val movieWithReview: Movie = movie.copy(
-    reviews = List(Review("testUser", "testReview", 1.0, isApproved = false)))
+    reviews = List(Review(None, "testUser", "testReview", 1.0, isApproved = false))
+  )
 
   "createMovie" should {
     "return true if the movie details have been added" in {
@@ -42,16 +44,16 @@ class MovieServiceSpec extends AbstractServiceTest {
     }
   }
 
-  "createReviewRating" should {
+  "createReview" should {
     "return true if review has been added" in {
       when(repo.createReview(any(), any()))
         .thenReturn(Future.successful(true))
-      await(service.createReviewRating("TESTMOV", review)) shouldBe true
+      await(service.createReview("TESTMOV", review)) shouldBe true
     }
     "return false if review details are incorrect" in {
       when(repo.createReview(any(), any()))
         .thenReturn(Future.successful(false))
-      await(service.createReviewRating("BADID", review)) shouldBe false
+      await(service.createReview("BADID", review)) shouldBe false
     }
   }
 
@@ -61,12 +63,82 @@ class MovieServiceSpec extends AbstractServiceTest {
         .thenReturn(Future(Some(movieWithReview)))
       await(service.read("TESTMOV")) shouldBe Some(movieWithReview, 1.0)
     }
-
     "return none if movieId does not exist" in {
       when(repo.read(any()))
         .thenReturn(Future(None))
       await(service.read("BADID")) shouldBe None
     }
+    "returns a 0.0 rating if movie does not contain any movies" in {
+      when(repo.read(any()))
+        .thenReturn(Future(Some(movie)))
+      await(service.read("TESTMOV")) shouldBe Some(movie, 0.0)
+    }
   }
+
+  "readReviewById" should {
+    "return all the movies associated to an ID" in {
+      when(repo.readAll())
+        .thenReturn(Future(List(movieWithReview)))
+      await(service.readReviewByID("testUser")) shouldBe List(review.copy(movieId = Some("TESTMOV")))
+    }
+    "returns an empty list if there is no movie associated to user" in {
+      when(repo.readAll())
+        .thenReturn(Future(Nil))
+      await(service.readReviewByID("testUser")) shouldBe Nil
+    }
+  }
+
+  "updateReview" should {
+    "returns true if the review has been updated" in {
+      when(repo.read(any()))
+        .thenReturn(Future(Some(movieWithReview)))
+      when(repo.updateReview(any(), any()))
+        .thenReturn(Future(true))
+      await(service.updateReview("TESTMOV", review.copy(review = "TEST UPDATE MOVIE 2"))) shouldBe true
+    }
+    "return false" when {
+      "the movie doesn't exist" in {
+        when(repo.read(any()))
+          .thenReturn(Future(None))
+        when(repo.updateReview(any(), any()))
+          .thenReturn(Future(false))
+        await(service.updateReview("BADMOVIEID", review.copy(review = "TEST UPDATE MOVIE 2"))) shouldBe false
+      }
+      "the review doesn't exist" in {
+        when(repo.read(any()))
+          .thenReturn(Future(Some(movieWithReview)))
+        when(repo.updateReview(any(), any()))
+          .thenReturn(Future(false))
+        await(service.updateReview("BADMOVIEID", review.copy(review = "TEST UPDATE MOVIE 2"))) shouldBe false
+      }
+    }
+  }
+
+  "removeReview" should {
+    "returns true if the review has been updated" in {
+      when(repo.read(any()))
+        .thenReturn(Future(Some(movieWithReview)))
+      when(repo.updateReview(any(), any()))
+        .thenReturn(Future(true))
+      await(service.removeReview("TESTMOV", "testUser")) shouldBe true
+    }
+    "return false" when {
+      "the movie doesn't exist" in {
+        when(repo.read(any()))
+          .thenReturn(Future(None))
+        when(repo.updateReview(any(), any()))
+          .thenReturn(Future(false))
+        await(service.removeReview("BADMOVIEID", "testUser")) shouldBe false
+      }
+      "the review doesn't exist" in {
+        when(repo.read(any()))
+          .thenReturn(Future(Some(movieWithReview)))
+        when(repo.updateReview(any(), any()))
+          .thenReturn(Future(false))
+        await(service.removeReview("BADMOVIEID", "testUser")) shouldBe false
+      }
+    }
+  }
+
 
 }

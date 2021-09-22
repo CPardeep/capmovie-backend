@@ -3,9 +3,9 @@ package controllers
 import models.Movie
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, NO_CONTENT, OK}
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Helpers}
 import repos.MovieRepo
 import services.MovieService
@@ -47,7 +47,7 @@ class MovieControllerSpec extends AbstractControllerTest {
        |    "${MovieFields.title}" : "${movie.title}"
        |}
        |""".stripMargin)
-  val testMovieList = List(movie, movie.copy(id= "TESMOV2"))
+  val testMovieList = List(movie, movie.copy(id = "TESMOV2"))
 
   "createMovie" should {
     "succeed" when {

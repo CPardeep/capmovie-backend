@@ -4,6 +4,7 @@ import models.User
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import services.LoginService
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -19,7 +20,7 @@ class AdminController @Inject()(cc: ControllerComponents,
         loginService.checkMatches(admin).map {
           case true => Ok
           case false => Unauthorized
-        }.recover{case _ => InternalServerError}
+        }.recover { case _ => InternalServerError }
       case JsError(_) => Future(BadRequest)
     }
   }

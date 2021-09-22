@@ -200,15 +200,27 @@ class MovieItSpec extends AbstractRepoTest with DefaultPlayMongoRepositorySuppor
     }
   }
 
-
   "createReview" should {
     "return true if review has successfully been added" in {
       await(repository.create(movie))
-      await(repository.createReview("TESTMOV", Review("USER101", "TESTREVIEW", 2.0, isApproved = false))) shouldBe true
+      await(repository.createReview("TESTMOV", Review(None, "USER101", "TESTREVIEW", 2.0, isApproved = false))) shouldBe true
     }
     "return false if wrong movie id is given" in {
       await(repository.create(movie))
-      await(repository.createReview("BADID", Review("USER101", "TESTREVIEW", 2.0, isApproved = false))) shouldBe false
+      await(repository.createReview("BADID", Review(None, "USER101", "TESTREVIEW", 2.0, isApproved = false))) shouldBe false
+    }
+  }
+
+  "updateReview" should {
+    "return true if review is different to the orginal review in db" in {
+      await(repository.create(movie))
+      await(repository.createReview("TESTMOV", Review(None, "USER101", "TESTREVIEW", 2.0, isApproved = false)))
+      await(repository.updateReview("TESTMOV", List(Review(None, "USER101", "TESTREVIEW", 3.0, isApproved = false)))) shouldBe true
+    }
+    "return false if the same values are being updated" in {
+      await(repository.create(movie))
+      await(repository.createReview("TESTMOV", Review(None, "USER101", "TESTREVIEW", 2.0, isApproved = false)))
+      await(repository.updateReview("TESTMOV", List(Review(None, "USER101", "TESTREVIEW", 2.0, isApproved = false)))) shouldBe false
     }
   }
 

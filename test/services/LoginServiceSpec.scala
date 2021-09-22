@@ -32,7 +32,7 @@ class LoginServiceSpec extends AnyWordSpec with Matchers with MockitoSugar {
       "when passwords do not match" in {
         when(adminRepo.read(any()))
           .thenReturn(Future(Some(user)))
-        await(service.checkMatches(user.copy(password="badPass"))) shouldBe false
+        await(service.checkMatches(user.copy(password = "badPass"))) shouldBe false
       }
       "no admin returned from db" in {
         when(adminRepo.read(any()))
@@ -54,7 +54,7 @@ class LoginServiceSpec extends AnyWordSpec with Matchers with MockitoSugar {
       "when passwords do not match" in {
         when(userRepo.read(any()))
           .thenReturn(Future(Some(user)))
-        await(service.checkMatchesUser(user.copy(password="badPass"))) shouldBe false
+        await(service.checkMatchesUser(user.copy(password = "badPass"))) shouldBe false
       }
       "no admin returned from db" in {
         when(userRepo.read(any()))

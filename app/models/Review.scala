@@ -2,7 +2,8 @@ package models
 
 import play.api.libs.json._
 
-case class Review(userId: String,
+case class Review(movieId: Option[String],
+                  userId: String,
                   review: String,
                   rating: Double,
                   isApproved: Boolean)
@@ -19,12 +20,11 @@ object Review {
         review <- (json \ "review").asOpt[String]
         rating <- (json \ "rating").asOpt[Double]
         isApproved <- (json \ "isApproved").asOpt[Boolean]
-      } yield Review(userId, review, rating, isApproved)
+      } yield Review(None, userId, review, rating, isApproved)
       result match {
         case Some(x) => JsSuccess(x)
         case _ => JsError("ERROR")
       }
     }
   }
-
 }

@@ -8,6 +8,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import play.api.test.{FakeRequest, Helpers}
 import services.LoginService
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
