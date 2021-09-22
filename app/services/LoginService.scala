@@ -2,6 +2,7 @@ package services
 
 import models.User
 import repos.{AdminRepo, UserRepo}
+
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

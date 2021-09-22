@@ -5,6 +5,7 @@ import play.api.libs.json.{JsSuccess, JsValue, Json}
 class ReviewSpec extends AbstractModelsTest {
 
   val review: Review = Review(
+    movieId = None,
     userId = "TESTUSER",
     review = "TESTREVIEW",
     rating = 5.0,

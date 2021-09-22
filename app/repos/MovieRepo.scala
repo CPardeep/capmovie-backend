@@ -4,7 +4,7 @@ import models._
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.Updates.{addToSet, pull, set}
-import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions}
+import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions, UpdateOptions}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -91,16 +91,20 @@ class MovieRepo @Inject()(mongoComponent: MongoComponent) extends PlayMongoRepos
   }
 
   def createReview(id: String, review: Review): Future[Boolean] = {
-    collection.updateOne(Filters.equal("id", id), addToSet("reviews", List(review.userId, review.review, review.rating, review.isApproved)))
-      .toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+    collection.updateOne(Filters.and(equal("id", id), Filters.ne("reviews.userId", {
+      review.userId
+    })),
+      addToSet("reviews", Map("userId" -> review.userId, "review" -> review.review, "rating" -> review.rating, "isApproved" -> review.isApproved))
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
   }
 
-
-  //  def updateReview() = ???
-  //  def removeReview() = ???
-  //
-  //  def updateRating() = ???
-  //  def remoteRating() = ???
-
-
+  def updateReview(movieId: String, reviews: List[Review]): Future[Boolean] = {
+    collection.updateOne(
+      Filters.equal("id", movieId),
+      set("reviews", {
+        reviews.map(review => Map("userId" -> review.userId, "review" -> review.review, "rating" -> review.rating, "isApproved" -> review.isApproved))
+      }),
+      (new UpdateOptions()).upsert(true)
+    ).toFuture().map(result => result.getModifiedCount == 1 && result.wasAcknowledged())
+  }
 }
