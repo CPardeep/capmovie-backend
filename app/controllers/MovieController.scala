@@ -1,6 +1,6 @@
 package controllers
 
-import models.Movie
+import models.{Movie, MovieWithAvgRating}
 import models.Movie.newMovieReads
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
@@ -21,7 +21,7 @@ class MovieController @Inject()(cc: ControllerComponents, service: MovieService,
 
   def read(id: String): Action[AnyContent] = Action.async { implicit request =>
     service.read(id).map {
-      case Some((movie, double)) => Ok(Json.toJson(movie, Json.obj("avgRating" -> double)))
+      case Some(movieWithAvgRating) => Ok(Json.toJson(movieWithAvgRating))
       case None => NotFound
     }.recover { case _ => BadRequest }
   }
@@ -35,6 +35,7 @@ class MovieController @Inject()(cc: ControllerComponents, service: MovieService,
       case JsError(_) => Future(BadRequest)
     }
   }
+
 
   def delete(id: String): Action[AnyContent] = Action.async { implicit request =>
     movieRepo.delete(id).map {

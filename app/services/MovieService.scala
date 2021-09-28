@@ -1,6 +1,6 @@
 package services
 
-import models.{Movie, Review}
+import models.{Movie, MovieWithAvgRating, Review}
 import repos.MovieRepo
 
 import javax.inject.Inject
@@ -17,13 +17,13 @@ class MovieService @Inject()(repo: MovieRepo) {
     repo.createReview(movieId, review)
   }
 
-  def read(movieId: String): Future[Option[(Movie, Double)]] = {
+  def read(movieId: String): Future[Option[MovieWithAvgRating]] = {
     for {
       optMovie <- repo.read(movieId)
     } yield optMovie.map { movie =>
       val ratings = movie.reviews.map(_.rating)
-      val rating = if (ratings.isEmpty) 0.0 else ratings.sum / ratings.size
-      movie -> rating
+      val rating = if (movie.reviews.isEmpty) 0.0 else ratings.sum / ratings.size
+      MovieWithAvgRating(movie, rating)
     }
   }
 
