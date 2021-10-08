@@ -1,6 +1,6 @@
 package controllers
 
-import models.Movie
+import models.{Movie, MovieWithAvgRating}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status._
@@ -89,7 +89,7 @@ class MovieControllerSpec extends AbstractControllerTest {
   "read" should {
     "return OK with a movie" in {
       when(service.read(any()))
-        .thenReturn(Future.successful(Some(movie, 0.0)))
+        .thenReturn(Future.successful(Some(MovieWithAvgRating(movie, 0.0))))
       val result = controller.read(movie.id).apply(FakeRequest())
       status(result) shouldBe OK
     }

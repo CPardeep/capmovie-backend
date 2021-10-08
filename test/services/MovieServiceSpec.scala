@@ -1,6 +1,6 @@
 package services
 
-import models.{Movie, Review}
+import models.{Movie, MovieWithAvgRating, Review}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -61,17 +61,17 @@ class MovieServiceSpec extends AbstractServiceTest {
     "return a movie and double" in {
       when(repo.read(any()))
         .thenReturn(Future(Some(movieWithReview)))
-      await(service.read("TESTMOV")) shouldBe Some(movieWithReview, 1.0)
+      await(service.read("TESTMOV")) shouldBe Some(MovieWithAvgRating(movieWithReview, 1.0))
     }
     "return none if movieId does not exist" in {
       when(repo.read(any()))
         .thenReturn(Future(None))
       await(service.read("BADID")) shouldBe None
     }
-    "returns a 0.0 rating if movie does not contain any movies" in {
+    "returns a 0.0 rating if movie does not contain any ratings" in {
       when(repo.read(any()))
         .thenReturn(Future(Some(movie)))
-      await(service.read("TESTMOV")) shouldBe Some(movie, 0.0)
+      await(service.read("TESTMOV")) shouldBe Some(MovieWithAvgRating(movie, 0.0))
     }
   }
 
